@@ -1,0 +1,11 @@
+# Ignore the virtual environment (it's too big!)
+venv/
+
+# Ignore your secret keys (don't let these get to GitHub!)
+.env
+
+# Ignore Mac system junk
+.DS_Store
+
+# Ignore Python's "brain debris"
+__pycache__/

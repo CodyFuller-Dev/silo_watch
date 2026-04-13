@@ -1,0 +1,1 @@
+#[!] This program pulls real time humidity data from a local weather sensor station and sends an text message alert to a grainbin operator to let them that the dryers need to be turned on. 
