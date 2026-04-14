@@ -25,3 +25,5 @@ def send_notification(current_humidity):
     subject = "North Silo Alert [!] HIGH HUMIDITY DETECTED"
     body = f"Warning: North Grain Silo humidity is {current_humidity}% \n Turn on Bin Dryer NOW"
     message = f"Subject: {subject}\n\n{body}"
+
+#test
