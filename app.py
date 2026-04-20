@@ -2,7 +2,7 @@
 from flask import Flask, jsonify
 
 #tells the program to go get the send alert called out in the if statements 
-from notification_service import send_alert
+from notification_service import send_notification
 
 #tells the script where in the project to look for the variable needed
 from weather_service import take_humidity
@@ -25,15 +25,15 @@ def city_wrapper():
     current_humidity = take_humidity(city)
 
 #when the API is called up and no data is returned for what ever reason an error message is sent
-#      if current_humidity is None:
-#        error_msg = "CRITICAL: Sensor Offline. Manual Data Reading Required!"
-#        send_alert(error_msg)
-#        return jsonify({"status": "Error", "message": error_msg}), 500
+    if current_humidity is None:
+        error_msg = "CRITICAL: Sensor Offline. Manual Data Reading Required!"
+        send_notification(error_msg)
+        return jsonify({"status": "Error", "message": error_msg}), 500
 
 #if the humidity is 51% or greater a directive is sent
     if current_humidity >=51:
         alert_msg = f"WARNING: Humidity is {current_humidity}%. Please start bin dryer IMMEDIATELY"
-        send_alert(alert_msg)
+        send_notification(alert_msg)
 
 #this allows for an all clear baseline message to be broadcast
     else:
