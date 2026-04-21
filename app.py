@@ -51,3 +51,5 @@ if __name__ == '__main__' :
     
     #this is the website starting portion, debug lets the browser show the issues as well as restarts the server when new code it saved, port 5000 is the default network port for flask.
     app.run(debug=True, port=5000)
+
+    #[!] USE PORT 5001 ON WORK LAPTOP
