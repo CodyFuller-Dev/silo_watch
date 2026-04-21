@@ -44,8 +44,4 @@ def send_notification(current_humidity):
     except Exception as e:
       print(f"Something went wrong: {e}")
 
-#defines what the send notification is actually pulling
-current_humidity = weather_service.take_humidity("Charleston,IL,US")
 
-#pulls from weather service current_humidity 
-send_notification(current_humidity)

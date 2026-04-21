@@ -29,12 +29,3 @@ def take_humidity(city):
     humidity = data['main']['humidity']
 
     return humidity
-
-
-
-#pretty output message with the noice \n for a line break
-print("Humidity Check \n _________________")
-#THIS is the ignition for all that code from the middle. it turns into one button that runs it all. Like putting a quarter in a pop machine 
-report = take_humidity("Charleston,IL,US")
-#gives the number provided by the report
-print(report)

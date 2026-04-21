@@ -47,7 +47,6 @@ def city_wrapper():
     })
 
 #this makes it so you need to start app.py directly and not if it is imported somewhere else in a different project module. 
-# !!may need to revisit this since we will need this to trigger a text message to my cell phone. 
 if __name__ == '__main__' :
     
     #this is the website starting portion, debug lets the browser show the issues as well as restarts the server when new code it saved, port 5000 is the default network port for flask.
