@@ -23,17 +23,16 @@ def city_wrapper():
 
 #current_humidity is just a placeholder name so that we can call take_humidity from the weather service mod and pass the "city" to it
     current_humidity = take_humidity(city)
-
-#when the API is called up and no data is returned for what ever reason an error message is sent
+    #when the API is called up and no data is returned for what ever reason an error message is sent
     if current_humidity is None:
         error_msg = "CRITICAL: Sensor Offline. Manual Data Reading Required!"
         send_notification(error_msg)
         return jsonify({"status": "Error", "message": error_msg}), 500
 
 #if the humidity is 51% or greater a directive is sent
-    if current_humidity >=51:
+    if current_humidity >=10:
         alert_msg = f"WARNING: Humidity is {current_humidity}%. Please start bin dryer IMMEDIATELY"
-        send_notification(alert_msg)
+        send_notification(current_humidity)
 
 #this allows for an all clear baseline message to be broadcast
     else:
@@ -50,6 +49,6 @@ def city_wrapper():
 if __name__ == '__main__' :
     
     #this is the website starting portion, debug lets the browser show the issues as well as restarts the server when new code it saved, port 5000 is the default network port for flask.
-    app.run(debug=True, port=5000)
-
-    #[!] USE PORT 5001 ON WORK LAPTOP
+    #Updated to include 0.0.0.0 for docker integration 
+    # use docker run -p 5001:5000 for the Work Laptop
+    app.run(debug=True, host='0.0.0.0', port=5000)

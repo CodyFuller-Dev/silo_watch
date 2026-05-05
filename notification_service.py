@@ -17,7 +17,7 @@ load_dotenv()
 
 
 #this is the container that holds the entire emailing function
-def send_notification(current_humidity):
+def send_notification(humidity_value):
 #this is the block to start an email. Here I am using the same TO: and FROM: but usually these would be different
     sender_email = os.getenv("MY_GMAIL")
     receiver_email = os.getenv("MY_GMAIL")
@@ -26,7 +26,7 @@ def send_notification(current_humidity):
 
 #laying out the structure of the email 
     subject = "North Silo Alert [!] HIGH HUMIDITY DETECTED"
-    body = f"Warning: North Grain Silo humidity is {current_humidity}% \n Turn on Bin Dryer NOW"
+    body = f"Warning: North Grain Silo humidity is {humidity_value}% \n Turn on Bin Dryer NOW"
     message = f"Subject: {subject}\n\n{body}"
 
 

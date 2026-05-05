@@ -20,12 +20,9 @@ api_key = os.getenv("OPENWEATHER_API_KEY")
 #digs though the file cabinet looking for the "main" folder, finds it then pulls out the humidity number-->
 #so proud gives you the number
 def take_humidity(city):
-    url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}&units=imperial"
+        url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}&units=imperial"
+        response = requests.get(url)
+        data = response.json()
 
-    response = requests.get(url)
-
-    data = response.json()
-
-    humidity = data['main']['humidity']
-
-    return humidity
+        humidity = data['main']['humidity']
+        return humidity
