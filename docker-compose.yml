@@ -3,6 +3,8 @@ services:
   silo-app:
     build: .
     ports:
-      - "5001:5000"
+      - "5001:5001"
+    volumes:
+      - ./app.log:/app/app.log
     env_file:
       - .env

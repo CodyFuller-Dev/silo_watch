@@ -14,7 +14,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . . 
 
 #tells docker to make all communication through port 5000
-EXPOSE 5000
+EXPOSE 5001
 
 #this tells the virtual computer upon start up start python AND my app.py application
 CMD ["python", "app.py"]
