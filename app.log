@@ -1,7 +1,0 @@
-2026-05-09 11:23:34,894 [INFO]  * Detected change in '/Users/codyfuller/Documents/python_workshop/silo_watch/app.py', reloading
-2026-05-09 11:23:35,223 [INFO] ========================================================
-2026-05-09 11:23:35,223 [INFO]  Silo Watch Program Initialized 
-2026-05-09 11:23:35,223 [INFO]  Navigate to http://127.0.0.1:5001/silo to view status 
-2026-05-09 11:23:35,223 [INFO] =======================================================
-2026-05-09 11:23:35,256 [WARNING]  * Debugger is active!
-2026-05-09 11:23:35,270 [INFO]  * Debugger PIN: 655-193-522
