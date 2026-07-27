@@ -1,22 +1,19 @@
 name: Deploy Silo Watch
 
-# Trigger the workflow on every push to the main branch
 on:
   push:
     branches:
       - main
+  workflow_dispatch: # Allows you to manually trigger this deployment from the GitHub Actions tab
 
-# Set environment variables for GCP
 env:
-  PROJECT_ID: "silo-watch-902081503325" 
+  PROJECT_ID: "project-7f6ebc51-8bd3-4490-bdd" 
   REGION: "us-central1"
   SERVICE_NAME: "silo-watch"
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
-    # Add permissions for the new secure login method
     permissions:
       contents: read
       id-token: write
@@ -46,3 +43,12 @@ jobs:
         run: |
           terraform init
           terraform apply -auto-approve
+
+      # Step 6: Build and Deploy actual Python code to the Cloud Run Service
+      - name: Build and Deploy Application Code
+        run: |
+          gcloud run deploy ${{ env.SERVICE_NAME }} \
+            --source . \
+            --region ${{ env.REGION }} \
+            --project ${{ env.PROJECT_ID }} \
+            --quiet
