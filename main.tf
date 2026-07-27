@@ -1,6 +1,5 @@
-# ==========================================================================
-# PART 1: The Provider (Handing over your ID badge to Google Cloud)
-# ==========================================================================
+# Corrected main.tf with the proper Project ID
+
 terraform {
   required_providers {
     google = {
@@ -11,63 +10,52 @@ terraform {
 }
 
 provider "google" {
-  project = "silo-watch-902081503325"
+  project = "project-7f6ebc51-8bd3-4490-bdd" # CORRECTED
   region  = "us-central1"
 }
 
-# ==========================================================================
-# PART 2 & 3: Building the Cloud Run Service (Setting up the container & specs)
-# ==========================================================================
 resource "google_cloud_run_v2_service" "silo_watch_service" {
   name     = "silo-watch"
   location = "us-central1"
   ingress  = "INGRESS_TRAFFIC_ALL"
+  project  = "project-7f6ebc51-8bd3-4490-bdd" # CORRECTED
 
   template {
     containers {
-      # This is a temporary placeholder image. GitHub Actions will overwrite this later.
       image = "us-docker.pkg.dev/cloudrun/container/hello" 
 
-      # Memory and CPU limit settings
       resources {
         limits = {
           memory = "512Mi"
           cpu    = "1"
         }
       }
-
-      # ==========================================================================
-      # PART 4: Environment Variables (Grabbing passwords from Secret Manager)
-      # ==========================================================================
       
-      # Secret 1: Your Gmail Address
       env {
         name = "MY_GMAIL"
         value_source {
           secret_key_ref {
-            secret  = "projects/silo-watch-902081503325/secrets/MY_GMAIL"
+            secret  = "projects/project-7f6ebc51-8bd3-4490-bdd/secrets/MY_GMAIL" # CORRECTED
             version = "latest"
           }
         }
       }
 
-      # Secret 2: Your Gmail App Password
       env {
         name = "GMAIL_PASS"
         value_source {
           secret_key_ref {
-            secret  = "projects/silo-watch-902081503325/secrets/GMAIL_PASS"
+            secret  = "projects/project-7f6ebc51-8bd3-4490-bdd/secrets/GMAIL_PASS" # CORRECTED
             version = "latest"
           }
         }
       }
 
-      # Secret 3: Your OpenWeather API Key
       env {
         name = "OPENWEATHER_API_KEY"
         value_source {
           secret_key_ref {
-            secret  = "projects/silo-watch-902081503325/secrets/OPENWEATHER_API_KEY"
+            secret  = "projects/project-7f6ebc51-8bd3-4490-bdd/secrets/OPENWEATHER_API_KEY" # CORRECTED
             version = "latest"
           }
         }
@@ -76,9 +64,6 @@ resource "google_cloud_run_v2_service" "silo_watch_service" {
   }
 }
 
-# ==========================================================================
-# PART 5: Public Access (Opening the front door to the internet)
-# ==========================================================================
 resource "google_cloud_run_v2_service_iam_member" "public_access" {
   project  = google_cloud_run_v2_service.silo_watch_service.project
   location = google_cloud_run_v2_service.silo_watch_service.location
