@@ -1,0 +1,48 @@
+name: Deploy Silo Watch
+
+# Trigger the workflow on every push to the main branch
+on:
+  push:
+    branches:
+      - main
+
+# Set environment variables for GCP
+env:
+  PROJECT_ID: "silo-watch-902081503325" 
+  REGION: "us-central1"
+  SERVICE_NAME: "silo-watch"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    # Add permissions for the new secure login method
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      # Step 1: Download codebase onto the GitHub runner
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Step 2: Log into Google Cloud securely using Workload Identity Federation
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: 'projects/902081503325/locations/global/workloadIdentityPools/github-pool/providers/github-provider'
+          service_account: 'github-actions-deployer@project-7f6ebc51-8bd3-4490-bdd.iam.gserviceaccount.com'
+
+      # Step 3: Install the Google Cloud SDK
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      # Step 4: Install Terraform on the runner
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      # Step 5: Initialize and Apply Terraform
+      - name: Terraform Init & Apply
+        run: |
+          terraform init
+          terraform apply -auto-approve

@@ -1,0 +1,10 @@
+#this file is like a keyed ignition instead of a hand crank to start
+services:
+  silo-app:
+    build: .
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./app.log:/app/app.log
+    env_file:
+      - .env
