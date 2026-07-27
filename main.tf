@@ -6,7 +6,6 @@ terraform {
     bucket  = "terraform-state-project-7f6ebc51-8bd3"
     prefix  = "silo-watch/state"
   }
-
   required_providers {
     google = {
       source  = "hashicorp/google"
@@ -21,6 +20,15 @@ provider "google" {
 }
 
 # ==========================================================================
+# NEW: Force-Enable Secret Manager API & Ensure Terraform waits for it
+# ==========================================================================
+resource "google_project_service" "secretmanager_api" {
+  project            = "project-7f6ebc51-8bd3-4490-bdd"
+  service            = "secretmanager.googleapis.com"
+  disable_on_destroy = false
+}
+
+# ==========================================================================
 # PART 2 & 3: Building the Cloud Run Service (Setting up the container & specs)
 # ==========================================================================
 resource "google_cloud_run_v2_service" "silo_watch_service" {
@@ -28,6 +36,9 @@ resource "google_cloud_run_v2_service" "silo_watch_service" {
   location = "us-central1"
   ingress  = "INGRESS_TRAFFIC_ALL"
   project  = "project-7f6ebc51-8bd3-4490-bdd"
+
+  # Wait for the Secret Manager API resource above to be fully ready before deploying
+  depends_on = [google_project_service.secretmanager_api]
 
   template {
     containers {
@@ -90,9 +101,12 @@ resource "google_cloud_run_v2_service_iam_member" "public_access" {
 }
 
 # ==========================================================================
-# PART 6: Import (Temporary instruction to adopt the existing live service)
+# PART 6: Import (DISABLED to prevent importing the old manual service)
 # ==========================================================================
-import {
-  to = google_cloud_run_v2_service.silo_watch_service
-  id = "projects/project-7f6ebc51-8bd3-4490-bdd/locations/us-central1/services/silo-watch"
-}
+# We have disabled this import block so that Terraform can deploy a fresh,
+# clean "silo-watch" service from scratch.
+#
+# import {
+#   to = google_cloud_run_v2_service.silo_watch_service
+#   id = "projects/project-7f6ebc51-8bd3-4490-bdd/locations/us-central1/services/silo-watch"
+# }
