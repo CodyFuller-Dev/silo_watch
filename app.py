@@ -55,7 +55,7 @@ def city_wrapper():
         return jsonify({"status": "Error", "message": error_msg}), 500
 
 #if the humidity is 51% or greater a directive is sent
-    if current_humidity >=10:
+    if current_humidity >=99:
         alert_msg = f"WARNING: Humidity is {current_humidity}%. Please start bin dryer IMMEDIATELY"
         logger.warning(f"Threshold Broken: Humidity at {current_humidity}%. Firing Alert Email")
         send_notification(current_humidity)
