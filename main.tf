@@ -71,9 +71,3 @@ resource "google_cloud_run_v2_service_iam_member" "public_access" {
   role     = "roles/run.invoker"
   member   = "allUsers"
 }
-
-import {
-  to = google_cloud_run_v2_service.silo_watch_service
-  id = "projects/project-7f6ebc51-8bd3-4490-bdd/locations/us-central1/services/silo-watch"
-}
-
