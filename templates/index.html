@@ -50,7 +50,7 @@
                 humDisplay.innerText = data.humidity + '%';
                 
                 // Trigger visual alert if high
-                if (data.humidity >= 51) {
+                if (data.humidity >= 99) {
                     humDisplay.classList.add('alert');
                     document.getElementById('alertMessage').style.display = "block";
                     if (isAutoPilot) {
