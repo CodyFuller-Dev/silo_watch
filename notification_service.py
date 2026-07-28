@@ -1,47 +1,36 @@
-#this deals with sending the email alert to the operator
-
-#smtplib = anything email related
-#ssl = privacy layer
-#os= os system layer now very important since this is on the mac and my work laptop
-#.env=secrets file
-#W_S lets me pull the actual humidity fetch function from the other module 
-
 import smtplib
 import ssl
 import os
-import weather_service
-#from dotenv import load_dotenv
+import logging
 
-#tells python to go into the file in the macos op sys
-#load_dotenv()
+# Set up the logger
+logger = logging.getLogger(__name__)
 
-
-#this is the container that holds the entire emailing function
 def send_notification(humidity_value):
-#this is the block to start an email. Here I am using the same TO: and FROM: but usually these would be different
     sender_email = os.getenv("MY_GMAIL")
     receiver_email = os.getenv("MY_GMAIL")
     password = os.getenv("GMAIL_PASS")
 
-
-#laying out the structure of the email 
+    # Laying out the structure of the email 
     subject = "North Silo Alert [!] HIGH HUMIDITY DETECTED"
     body = f"Warning: North Grain Silo humidity is {humidity_value}% \n Turn on Bin Dryer NOW"
     message = f"Subject: {subject}\n\n{body}"
 
-
-#this is the encryption layer basically a secure tunnel end to end 
-    context = ssl.create_default_context()
-
-#this block grabs the ssl protocol and uses port 465 sends over the user and pass allowing the email to actually be sent off. Then gives a response if it worked 
+    # Use STARTTLS over port 587 (The standard allowed port for Google Cloud Run)
     try:
-        with smtplib.SMTP_SSL("smtp.gmail.com", 587, context=context) as server:
-            server.login(sender_email, password)
-            server.sendmail(sender_email, receiver_email, message)
-        print("Email sent successfully")
+        # 1. Connect over standard SMTP port 587
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        # 2. Start the secure TLS tunnel (STARTTLS)
+        context = ssl.create_default_context()
+        server.starttls(context=context)
+        # 3. Login and send!
+        server.login(sender_email, password)
+        server.sendmail(sender_email, receiver_email, message)
+        server.quit()
         
-        #this along with the above helps keep the whole program from straight up crashing. Gives it a soft off ramp of sorts
+        # Log success so you know it worked!
+        logger.info("Email sent successfully to operator.")
+        
     except Exception as e:
-      print(f"Something went wrong: {e}")
-
-
+        # Log the exact error as an ERROR so it shows up in your filtered logs
+        logger.error(f"SMTP FAILED - Gmail rejected the connection: {e}")
