@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silo Watch</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #121212; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .dashboard { background: #1e1e1e; padding: 40px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.8); text-align: center; width: 350px; border: 1px solid #333; }
+        .humidity { font-size: 5rem; font-weight: bold; color: #00e676; margin: 20px 0; }
+        .alert { color: #ff1744 !important; }
+        .btn { background: #2196f3; color: white; border: none; padding: 12px 24px; border-radius: 6px; font-size: 1rem; cursor: pointer; font-weight: bold; margin-top: 10px; width: 100%; }
+        .btn:hover { background: #1976d2; }
+        .toggle-container { margin-top: 25px; padding-top: 20px; border-top: 1px solid #333; display: flex; justify-content: space-between; align-items: center; }
+        .status-text { font-size: 0.9rem; color: #aaa; margin-top: 15px; min-height: 40px; } /* min-height keeps layout from shifting when text size changes */
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <h2 style="margin-top: 0; color: #aaa;">GRAIN SILO NORTH</h2>
+        
+        <div class="humidity" id="humidityDisplay">--%</div>
+        <div id="alertMessage" style="display: none; color: #ff1744; font-weight: bold; margin-bottom: 20px;">⚠️ HIGH HUMIDITY DETECTED</div>
+        <!-- Manual Button -->
+        <button class="btn" onclick="fetchData()">MANUAL HUMIDITY CHECK</button>
+        <!-- Auto-Pilot Toggle -->
+        <div class="toggle-container">
+            <label for="autoPilot" style="font-weight: bold; color: #aaa; text-align: left; padding-right: 10px;">Check this box to enable 1 minuet auto-trigger</label>
+            <input type="checkbox" id="autoPilot" style="transform: scale(1.5);">
+        </div>
+        
+        <div class="status-text" id="statusText">System Idle. Awaiting command.</div>
+    </div>
+    <script>
+        let timerInterval;       // Handles the actual API background checks
+        let countdownInterval;   // Handles the visual clock ticking down
+        let secondsLeft = 60;    // Starts the countdown at 60 seconds
+
+        // The function that calls your Python backend
+        async function fetchData() {
+            // Keep the countdown text clear if autopilot is running
+            const isAutoPilot = document.getElementById('autoPilot').checked;
+            document.getElementById('statusText').innerText = "Fetching sensor data...";
+            
+            try {
+                const response = await fetch('/silo-humidity');
+                const data = await response.json();
+                
+                const humDisplay = document.getElementById('humidityDisplay');
+                humDisplay.innerText = data.humidity + '%';
+                
+                // Trigger visual alert if high
+                if (data.humidity >= 51) {
+                    humDisplay.classList.add('alert');
+                    document.getElementById('alertMessage').style.display = "block";
+                    if (isAutoPilot) {
+                        document.getElementById('statusText').innerText = `ALERT TRIGGERED - EMAIL SENT\nNext auto-check in ${secondsLeft}s`;
+                    } else {
+                        document.getElementById('statusText').innerText = "ALERT TRIGGERED - EMAIL SENT";
+                    }
+                } else {
+                    humDisplay.classList.remove('alert');
+                    document.getElementById('alertMessage').style.display = "none";
+                    if (isAutoPilot) {
+                        document.getElementById('statusText').innerText = `Status Nominal. Last checked just now.\nNext auto-check in ${secondsLeft}s`;
+                    } else {
+                        document.getElementById('statusText').innerText = "Status Nominal. Last checked just now.";
+                    }
+                }
+            } catch (error) {
+                document.getElementById('statusText').innerText = "Connection Error!";
+            }
+        }
+
+        // Handles the live counting visual display
+        function startVisualCountdown() {
+            // Reset clock to 60
+            secondsLeft = 60;
+
+            // Make sure any previous visual clock is destroyed before starting a new one
+            clearInterval(countdownInterval);
+
+            countdownInterval = setInterval(() => {
+                secondsLeft--;
+                
+                // Get current status string (nomimal or alert) and update the clock segment
+                const statusStr = document.getElementById('alertMessage').style.display === "block" 
+                    ? "ALERT TRIGGERED - EMAIL SENT" 
+                    : "Status Nominal. Last checked just now.";
+                
+                document.getElementById('statusText').innerText = `${statusStr}\nNext auto-check in ${secondsLeft}s`;
+
+                // When we hit zero, immediately reset seconds back to 60 for the next round
+                if (secondsLeft <= 0) {
+                    secondsLeft = 60;
+                }
+            }, 1000); // Ticks every 1,000ms (1 second)
+        }
+
+        // Logic for the Auto-Pilot Toggle Switch
+        document.getElementById('autoPilot').addEventListener('change', function() {
+            if (this.checked) {
+                // Inform the user immediately
+                document.getElementById('statusText').innerText = "Auto-Check Activated...";
+                
+                // Run immediately once
+                fetchData(); 
+                startVisualCountdown();
+                
+                // Set the backend check to repeat exactly every 60 seconds
+                timerInterval = setInterval(() => {
+                    fetchData();
+                }, 60000); 
+            } else {
+                // Safely kill both the network timer and the visual timer
+                clearInterval(timerInterval);
+                clearInterval(countdownInterval);
+                document.getElementById('statusText').innerText = "Auto-Check Deactivated. System Idle.";
+            }
+        });
+    </script>
+</body>
+</html>
