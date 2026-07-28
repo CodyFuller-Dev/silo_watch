@@ -32,6 +32,8 @@ def send_notification(humidity_value):
         server.quit()
         logger.info("Email sent successfully to operator.")
         
+    except smtplib.SMTPAuthenticationError as e:
+        logger.error(f"SMTP Auth failed - password may be expired or revoked: {e}")
     except Exception as e:
         logger.error(f"SMTP FAILED - Gmail rejected the connection: {e}")
 
