@@ -40,8 +40,6 @@ resource "google_cloud_run_v2_service" "silo_watch_service" {
   }
 
   template {
-    service_account = "project-7f6ebc51-8bd3-4490-bdd@appspot.gserviceaccount.com"
-    
     containers {
       # This is a temporary placeholder image. GitHub Actions will overwrite this later.
       image = "us-docker.pkg.dev/cloudrun/container/hello" 
@@ -61,7 +59,7 @@ resource "google_cloud_run_v2_service" "silo_watch_service" {
         name = "MY_GMAIL"
         value_source {
           secret_key_ref {
-            secret  = "MY_GMAIL"
+            secret  = "projects/project-7f6ebc51-8bd3-4490-bdd/secrets/MY_GMAIL"
             version = "latest"
           }
         }
@@ -71,7 +69,7 @@ resource "google_cloud_run_v2_service" "silo_watch_service" {
         name = "GMAIL_PASS"
         value_source {
           secret_key_ref {
-            secret  = "GMAIL_PASS"
+            secret  = "projects/project-7f6ebc51-8bd3-4490-bdd/secrets/GMAIL_PASS"
             version = "latest"
           }
         }
@@ -81,7 +79,7 @@ resource "google_cloud_run_v2_service" "silo_watch_service" {
         name = "OPENWEATHER_API_KEY"
         value_source {
           secret_key_ref {
-            secret  = "OPENWEATHER_API_KEY"
+            secret  = "projects/project-7f6ebc51-8bd3-4490-bdd/secrets/OPENWEATHER_API_KEY"
             version = "latest"
           }
         }
@@ -94,35 +92,7 @@ resource "google_cloud_run_v2_service" "silo_watch_service" {
 # PART 5: Public Access (Opening the front door to the internet)
 # ==========================================================================
 # ==========================================================================
-# PART 6: IAM Permissions (Allowing Cloud Run to access secrets)
-# ==========================================================================
-
-# Get the default Cloud Run service account
-data "google_client_config" "default" {}
-
-# Grant the Cloud Run service account permission to access MY_GMAIL secret
-resource "google_secret_manager_secret_iam_member" "gmail_secret_access" {
-  secret_id = "MY_GMAIL"
-  role      = "roles/secretmanager.secretAccessor"
-  member    = "serviceAccount:project-7f6ebc51-8bd3-4490-bdd@appspot.gserviceaccount.com"
-}
-
-# Grant the Cloud Run service account permission to access GMAIL_PASS secret
-resource "google_secret_manager_secret_iam_member" "gmail_pass_secret_access" {
-  secret_id = "GMAIL_PASS"
-  role      = "roles/secretmanager.secretAccessor"
-  member    = "serviceAccount:project-7f6ebc51-8bd3-4490-bdd@appspot.gserviceaccount.com"
-}
-
-# Grant the Cloud Run service account permission to access OPENWEATHER_API_KEY secret
-resource "google_secret_manager_secret_iam_member" "api_key_secret_access" {
-  secret_id = "OPENWEATHER_API_KEY"
-  role      = "roles/secretmanager.secretAccessor"
-  member    = "serviceAccount:project-7f6ebc51-8bd3-4490-bdd@appspot.gserviceaccount.com"
-}
-
-# ==========================================================================
-# PART 7: Public Access (Opening the front door to the internet)
+# PART 5: Public Access (Opening the front door to the internet)
 # ==========================================================================
 resource "google_cloud_run_v2_service_iam_member" "public_access" {
   project  = google_cloud_run_v2_service.silo_watch_service.project
