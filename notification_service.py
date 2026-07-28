@@ -35,7 +35,7 @@ def send_notification(humidity_value):
 
 #this block grabs the ssl protocol and uses port 465 sends over the user and pass allowing the email to actually be sent off. Then gives a response if it worked 
     try:
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+        with smtplib.SMTP_SSL("smtp.gmail.com", 587, context=context) as server:
             server.login(sender_email, password)
             server.sendmail(sender_email, receiver_email, message)
         print("Email sent successfully")
