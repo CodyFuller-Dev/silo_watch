@@ -5,10 +5,10 @@ import os
 #allows python to use urls aka web browser of sorts
 import requests
 #lets python look for the .env file to pull secret information from
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 
 #tells python to go into the file in the macos op sys. This also assigns the real key to api_key
-load_dotenv()
+#load_dotenv()
 api_key = os.getenv("OPENWEATHER_API_KEY")
 
 

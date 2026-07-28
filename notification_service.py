@@ -10,10 +10,10 @@ import smtplib
 import ssl
 import os
 import weather_service
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 
 #tells python to go into the file in the macos op sys
-load_dotenv()
+#load_dotenv()
 
 
 #this is the container that holds the entire emailing function

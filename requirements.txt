@@ -16,7 +16,7 @@ MarkupSafe==3.0.3
 multidict==6.7.1
 propcache==0.4.1
 PyJWT==2.12.1
-python-dotenv==1.2.2
+#python-dotenv==1.2.2
 requests==2.33.0
 twilio==9.10.4
 urllib3==2.6.3
