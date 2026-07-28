@@ -73,6 +73,9 @@ def city_wrapper():
 
 # this makes it so you need to start app.py directly and not if it is imported somewhere else in a different project module. 
 if __name__ == '__main__':
-    # this is the website starting portion, debug lets the browser show the issues as well as restarts the server when new code is saved
-    # Updated to include 0.0.0.0 for docker integration
-    app.run(debug=True, host='0.0.0.0', port=5001)
+    # Get the port number from the environment variable PORT
+    # Default to 5001 if the environment variable is not set (for local testing)
+    port = int(os.environ.get('PORT', 5001))
+    
+    # Run the app, listening on all interfaces and on the correct port
+    app.run(debug=True, host='0.0.0.0', port=port)
