@@ -28,10 +28,14 @@ resource "google_cloud_run_v2_service" "silo_watch_service" {
   ingress  = "INGRESS_TRAFFIC_ALL"
   project  = "project-7f6ebc51-8bd3-4490-bdd"
 
-  # Tells Terraform not to reset your live custom code back to the placeholder image
+  # UPDATED: Tells Terraform to ignore changes made by gcloud deploy
   lifecycle {
     ignore_changes = [
-      template[0].containers[0].image
+      template[0].containers[0].image,
+      client,
+      client_version,
+      template[0].labels,
+      template[0].annotations
     ]
   }
 
