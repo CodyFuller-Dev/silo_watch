@@ -1,20 +1,23 @@
-#Tells docker I need a small system to run a specific version on python
+#this is the base python image and the slim tells us that its just the basics needed to extra stuff
 FROM python:3.12-slim
 
-# creates a workspace inside the virtual computer, moves us into it automatically and makes it so every command runs from inside that folder 
+#this sets the working directory where all the rest of the work and project files get loaded
 WORKDIR /app
 
-#sends the list of dependencies needed to actually run everything over to the virtual computer
+#this litterally coppies the requirements file over to the app
+#only the req file is coppied first because once its written it usually dose not change
+#doing this first then runing pip below keeps newer builds from runing though the pip of all the req's if "anything" in the main app.py changes
 COPY requirements.txt .
 
-#takes the list of dependencies from above and actually installs them in the container
+#this actually goes through and installs all the items listed out in the req file. 
+#It also tells the app not to save any instalation files because we would never "reinstall" something inside a container we would just spin up a different container
 RUN pip install --no-cache-dir -r requirements.txt
 
-#this copies the rest of the project files into the container again into the /app folder specifically
+#this coppies everything else in the project over to the app
 COPY . . 
 
-#tells docker to make all communication through port 5000
+#shows what port the app operates on but dose not acually open that port
 EXPOSE 5001
 
-#this tells the virtual computer upon start up start python AND my app.py application
+#this actually starts up the flask app thus cranking up the engine
 CMD ["python", "app.py"]

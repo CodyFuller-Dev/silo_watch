@@ -1,10 +1,16 @@
 #this file is like a keyed ignition instead of a hand crank to start
+#recipe card already filled out instead of having to hand write the (docker command)
 services:
+#declares the name of my app
   silo-app:
+  #this points docker compose to build from the included dockerfile inside the project folder
     build: .
+    #allows for localhost5001 in the browser URL
     ports:
       - "5001:5001"
+      #this stores the container logs into a personal log file as well so that if the container goes off line I still have access to the most up to date logs
     volumes:
       - ./app.log:/app/app.log
+      #this tells docker to grab all secrets and configuration files from the .env file
     env_file:
       - .env

@@ -1,0 +1,4 @@
+#this file is to configure teh linter to exclude certain files that are huge
+[flake8]
+exclude = venv
+max-line-length = 99

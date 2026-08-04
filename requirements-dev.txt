@@ -1,0 +1,3 @@
+#adds in dev functionality to the workflow
+flake8
+pytest
