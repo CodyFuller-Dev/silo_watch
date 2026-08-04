@@ -47,6 +47,8 @@ jobs:
       # this looks for any files starting with test_ 
       # this runs unit tests to make sure all of the application logic still working before deployment
       - name: Unit Tests (pytest)
+        env:
+          PYTHONPATH: ${{ github.workspace }}
         run: |
           pytest
 
